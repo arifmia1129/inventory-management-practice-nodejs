@@ -50,16 +50,7 @@ module.exports.getProduct = async (req, res, next) => {
 
 module.exports.createProduct = async (req, res, next) => {
     try {
-        //mongoose have two way to save data. save or create
 
-        // save
-        // const product = new Product(req.body);
-
-
-
-        // const result = await product.save();
-
-        // create 
         const result = await createNewProductService(req.body);
 
         result.logger();
