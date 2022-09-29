@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
 
 const productSchema = mongoose.Schema({
     name: {
@@ -6,6 +7,7 @@ const productSchema = mongoose.Schema({
         require: true,
         trim: true,
         unique: true,
+        lowercase: true,
         minLength: [3, "Name must be 3 character."],
         maxLength: [100, "Name is too large."]
     },
@@ -13,54 +15,48 @@ const productSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    price: {
-        type: Number,
-        min: [0, "Price can't be negative"],
-        require: true
-    },
     unit: {
         type: String,
         require: true,
         enum: {
-            values: ["kg", "litre", "pcs"],
-            message: "Unit value must be kg/litre/pcs"
+            values: ["kg", "litre", "pcs", "bag"],
+            message: "Unit value must be kg/litre/pcs/bag"
         }
     },
-    quantity: {
-        type: Number,
-        require: true,
-        min: 0,
-        validate: {
-            validator: (value) => {
-                const isInteger = Number.isInteger(value);
-                if (isInteger) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        },
-        message: "Quantity value must be an integer."
-    },
-    status: {
+    imageURLs: [{
         type: String,
         require: true,
-        enum: {
-            values: ["in-stock", "out-of-stock", "discontinued"]
+        validate: {
+            validator: (value) => {
+                if (!Array.isArray(value)) {
+                    return false;
+                }
+                let isValid = true;
+                value.forEach(url => {
+                    if (!validator.isURL(url)) {
+                        return isValid = false;
+                    }
+                })
+                return isValid;
+            },
+            message: "Please provide valid image url"
         }
+    }],
+    category: {
+        type: String,
+        require: true
     },
-    // supplier: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Supplier"
-    // },
-    // categories: [{
-    //   name: {
-    //     type: String,
-    //     require: true
-    //   },
-    //   _id: mongoose.Schema.Types.ObjectId
-    // }]
+    brand: {
+        name: {
+            type: String,
+            require: true
+        },
+        id: {
+            type: ObjectId,
+            ref: "Brand",
+            require: true
+        }
+    }
 }, {
     timestamps: true
 })
