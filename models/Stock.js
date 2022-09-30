@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
 
 const productSchema = mongoose.Schema({
+    productId: {
+        type: ObjectId,
+        ref: "Product",
+        require: true
+    },
     name: {
         type: String,
         require: true,
@@ -22,6 +27,16 @@ const productSchema = mongoose.Schema({
             values: ["kg", "litre", "pcs", "bag"],
             message: "Unit value must be kg/litre/pcs/bag"
         }
+    },
+    price: {
+        type: Number,
+        require: true,
+        min: [0, "Product price can't be negative"]
+    },
+    quantity: {
+        type: Number,
+        require: true,
+        min: [0, "Product quantity can't be negative"]
     },
     imageURLs: [{
         type: String,
@@ -57,54 +72,18 @@ const productSchema = mongoose.Schema({
             require: true
         }
     },
-    store: {
-        name: {
-            type: String,
-            require: [true, "Please provide a store name"],
-            trim: true,
-            unique: true,
-            lowercase: true,
-            enum: {
-                values: ["dhaka", "chattogram", "khulna", "barisal", "rajshahi", "rangpur"],
-                message: "{VALUE} is not a valid name"
-            }
-        },
-        id: {
-            type: ObjectId,
-            ref: "Store"
-        }
-    },
-    suppliedBy: {
-        name: {
-            type: String,
-            require: true
-        },
-        id: {
-            type: ObjectId,
-            ref: "Supplier"
+    status: {
+        type: String,
+        require: true,
+        enum: {
+            values: ["in-stock", "out-of-stock", "discontinued"],
+            message: "Status can't be {VALUE}"
         }
     }
 }, {
     timestamps: true
 })
 
-// mongoose middleware pre & post
-productSchema.pre("save", function (next) {
-    if (this.quantity === 0) {
-        this.status = "out-of-stock"
-    }
-    next();
-})
+const Stock = mongoose.model("Stock", stockSchema);
 
-// productSchema.post("save", function (doc, next) {
-//   console.log("After saving data");
-//   next();
-// })
-
-productSchema.methods.logger = function () {
-    console.log(`Data saved for ${this.name}`);
-}
-
-const Product = mongoose.model("Product", productSchema);
-
-module.exports = Product;
+module.exports = Stock;
