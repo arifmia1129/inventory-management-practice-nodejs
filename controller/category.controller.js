@@ -62,8 +62,7 @@ module.exports.updateCategory = async (req, res, next) => {
         if (!result.nModified) {
             return res.status(400).json({
                 status: "fail",
-                message: "Couldn't update the category",
-                error: error.message
+                message: "Couldn't update the category"
             })
         }
         res.status(200).json({
