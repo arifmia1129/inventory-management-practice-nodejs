@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
 const validator = require("validator");
 
-const productSchema = mongoose.Schema({
+const stockSchema = mongoose.Schema({
     productId: {
         type: ObjectId,
         ref: "Product",
@@ -66,9 +66,10 @@ const productSchema = mongoose.Schema({
             message: "Status can't be {VALUE}"
         }
     },
-    saleCount: {
+    sellCount: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     }
 }, {
     timestamps: true
