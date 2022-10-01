@@ -143,3 +143,20 @@ module.exports.bulkDeleteProduct = async (req, res, next) => {
         })
     }
 }
+
+
+module.exports.fileUpload = async (req, res, next) => {
+    try {
+        res.status(200).json({
+            status: "success",
+            message: "File uploaded successfully",
+            data: req.files
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "fail",
+            message: "Could'nt uploaded file",
+            error: error.message
+        })
+    }
+}
