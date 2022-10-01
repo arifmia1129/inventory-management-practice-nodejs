@@ -1,28 +1,28 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
+const validator = require("validator");
 
 const productSchema = mongoose.Schema({
     productId: {
         type: ObjectId,
         ref: "Product",
-        require: true
+        required: true
     },
     name: {
         type: String,
-        require: true,
+        required: true,
         trim: true,
-        unique: true,
         lowercase: true,
         minLength: [3, "Name must be 3 character."],
         maxLength: [100, "Name is too large."]
     },
     description: {
         type: String,
-        require: true
+        required: true
     },
     unit: {
         type: String,
-        require: true,
+        required: true,
         enum: {
             values: ["kg", "litre", "pcs", "bag"],
             message: "Unit value must be kg/litre/pcs/bag"
@@ -30,55 +30,45 @@ const productSchema = mongoose.Schema({
     },
     price: {
         type: Number,
-        require: true,
+        required: true,
         min: [0, "Product price can't be negative"]
     },
     quantity: {
         type: Number,
-        require: true,
+        required: true,
         min: [0, "Product quantity can't be negative"]
     },
     imageURLs: [{
         type: String,
-        require: true,
-        validate: {
-            validator: (value) => {
-                if (!Array.isArray(value)) {
-                    return false;
-                }
-                let isValid = true;
-                value.forEach(url => {
-                    if (!validator.isURL(url)) {
-                        return isValid = false;
-                    }
-                })
-                return isValid;
-            },
-            message: "Please provide valid image url"
-        }
+        required: true,
+        validate: [validator.isURL, "Please provide valid url(s)"]
     }],
     category: {
         type: String,
-        require: true
+        required: true
     },
     brand: {
         name: {
             type: String,
-            require: true
+            required: true
         },
         id: {
             type: ObjectId,
             ref: "Brand",
-            require: true
+            required: true
         }
     },
     status: {
         type: String,
-        require: true,
+        required: true,
         enum: {
             values: ["in-stock", "out-of-stock", "discontinued"],
             message: "Status can't be {VALUE}"
         }
+    },
+    saleCount: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true
