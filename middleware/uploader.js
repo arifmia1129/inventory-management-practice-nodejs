@@ -20,7 +20,7 @@ const uploader = multer({
             cb(null, true);
         }
         else {
-            cb(new Error("File format must be jpg/png"))
+            cb(new Error("File format must be jpg/png/jpeg"))
         }
     },
     limits: {
